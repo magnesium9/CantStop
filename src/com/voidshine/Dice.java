@@ -3,8 +3,9 @@ package com.voidshine;
 import java.util.Arrays;
 
 public class Dice {
+    public final int COUNT = 4;
 
-    int[] _Values = new int[4];
+    int[] _Values = new int[COUNT];
 
     public Dice() {
         // Constructor.  Rolls the dice, so that they initially
@@ -34,4 +35,14 @@ public class Dice {
         return String.join(" ", Arrays.stream(_Values).mapToObj(String::valueOf).toArray(String[]::new));
     }
 
+    // Specify a "pairing" index (0, 1, or 2) that indicates
+    // the second die to pair with the first (index *after*
+    // skipping first).  Returns this sum as well as the
+    // sum of the other pair.
+    int[] GetSums(int index) {
+        int[] sums = new int[2];
+        sums[0] = _Values[0] + _Values[index + 1];
+        sums[1] = Arrays.stream(_Values).sum() - sums[0];
+        return sums;
+    }
 }

@@ -51,6 +51,20 @@ public class Game {
         });
         moves.add(stop);
 
+        // Pairings of dice can be derived by holding first
+        // die fixed and choosing one of the other three to
+        // pair with it; the other pair is then implied.
+        for (int i = 0; i < from._Dice.COUNT - 1; i++) {
+            // Homework: Eliminate duplicates!  Hint, it may be
+            // helpful to always have the sums sorted (this also
+            // helps user think about what's happening).
+            int[] sums = from._Dice.GetSums(i);
+            Move move = new Move(from, "Advance on " + sums[0] + " and " + sums[1], s -> {
+
+            });
+            moves.add(move);
+        }
+
         // Assign easy-to-type action strings for all moves
         int counter = 0;
         for (Move m : moves) {
