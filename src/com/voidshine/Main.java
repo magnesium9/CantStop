@@ -1,6 +1,8 @@
 package com.voidshine;
 
+import java.io.PrintStream;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Main {
 
@@ -8,17 +10,33 @@ public class Main {
         Game game = new Game(new String[]{"zimoyoyo", "magnesium9"});
         State state = game.NewGameState();
         Scanner scanner = new Scanner(System.in);
+        PrintStream o = System.out;
         while (!state._IsFinal) {
-            System.out.println(state.ToString());
-            System.out.print(" > ");
+            o.println(state.ToString());
+            ArrayList<Move> moves = game.GetMoves(state);
+            for (Move m : moves) {
+                o.println(m._Action + " -> " + m._Description);
+            }
+            o.print(" > ");
             String line = scanner.nextLine();
             if (line.equals("quit")) {
                 break;
             } else {
-                state = game.TakeAction(state, line);
+                Move chosenMove = null;
+                for (Move m : moves) {
+                    if (m._Action.equals(line)) {
+                        chosenMove = m;
+                        break;
+                    }
+                }
+                if (chosenMove == null) {
+                    o.println("Invalid action.");
+                } else {
+                    state = chosenMove._Next;
+                }
             }
         }
-        System.out.println("Final game state...");
-        System.out.println(state.ToString());
+        o.println("Final game state...");
+        o.println(state.ToString());
     }
 }

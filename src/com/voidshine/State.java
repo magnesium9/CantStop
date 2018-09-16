@@ -1,18 +1,19 @@
 package com.voidshine;
 
-import java.util.Arrays;
-
+// Holds full state of the game and evolves from one step to next
+// in combination with Game class.
 public class State {
     private Game _Game;
     int _PlayerIndex;
     boolean _IsFinal;
     int _Winner;
     String _Error;
-    int[] _Dice;
+    Dice _Dice;
 
     State(Game game) {
         _Game = game;
         _Winner = -1;
+        _Dice = new Dice();
     }
 
     State Clone() {
@@ -21,7 +22,7 @@ public class State {
         s._IsFinal = _IsFinal;
         s._Error = _Error;
         s._Winner = _Winner;
-        s._Dice = _Dice == null ? null : _Dice.clone();
+        s._Dice = _Dice.Clone();
         return s;
     }
 
@@ -31,11 +32,6 @@ public class State {
 
     String WinnerName() {
         return _Game._Players[_Winner]._Name;
-    }
-
-    String DiceString() {
-//        String.join(" ", Arrays.stream(_Dice).map(d -> Integer::toString).collect(
-        return String.join(" ", new String[]{"a", "b", "c", "d",});
     }
 
     String ToString() {
@@ -50,7 +46,7 @@ public class State {
             }
         } else {
             sb.append(PlayerName() + " to play.\n");
-            sb.append("Dice: " + DiceString() + "\n");
+            sb.append("Dice: " + _Dice.ToString() + "\n");
         }
         return sb.toString();
     }

@@ -1,5 +1,9 @@
 package com.voidshine;
 
+import java.util.ArrayList;
+
+// A game encapsulates the rules and things that remain constant
+// from beginning to end of a play of the game.
 public class Game {
     Player[] _Players;
 
@@ -25,17 +29,35 @@ public class Game {
         return (currentPlayer + 1) % NumPlayers();
     }
 
-    State TakeAction(State from, String actionSpec) {
-        State to = from.Clone();
-        to._Error = null;
-        if (actionSpec.equals("stop")) {
-            to._PlayerIndex = NextPlayer(to._PlayerIndex);
-        } else if (actionSpec.equals("resign")) {
-            to._IsFinal = true;
-            to._Winner = (from._PlayerIndex + 1) % NumPlayers();
-        } else {
-            to._Error = "Invalid action.";
+    ArrayList<Move> GetMoves(State from) {
+        ArrayList<Move> moves = new ArrayList<Move>();
+
+        if (from._IsFinal) {
+            // No moves to make
+            return moves;
         }
-        return to;
+
+        // If game is active we can always accept a resign move
+        Move resign = new Move(from, "Resign", s -> {
+            s._IsFinal = true;
+            s._Winner = NextPlayer(s._PlayerIndex);
+        });
+        moves.add(resign);
+
+        // Stop move
+        Move stop = new Move(from, "Stop", s -> {
+            s._PlayerIndex = NextPlayer(s._PlayerIndex);
+            s._Dice.roll();
+        });
+        moves.add(stop);
+
+        // Assign easy-to-type action strings for all moves
+        int counter = 0;
+        for (Move m : moves) {
+            m._Action = Integer.toString(counter);
+            counter++;
+        }
+
+        return moves;
     }
 }
