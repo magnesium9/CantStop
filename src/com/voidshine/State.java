@@ -9,11 +9,13 @@ public class State {
     int _Winner;
     String _Error;
     Dice _Dice;
+    Board _Board;
 
     State(Game game) {
         _Game = game;
         _Winner = -1;
         _Dice = new Dice();
+        _Board = new Board();
     }
 
     State Clone() {
@@ -23,6 +25,7 @@ public class State {
         s._Error = _Error;
         s._Winner = _Winner;
         s._Dice = _Dice.Clone();
+        s._Board = _Board.Clone();
         return s;
     }
 
@@ -39,6 +42,7 @@ public class State {
         if (_Error != null) {
             sb.append("Error: " + _Error + "\n");
         }
+        sb.append(_Board.ToString());
         if (_IsFinal) {
             sb.append("Game is over.\n");
             if (_Winner >= 0) {

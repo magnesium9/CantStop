@@ -3,7 +3,8 @@ package com.voidshine;
 import java.util.Arrays;
 
 public class Dice {
-    public final int COUNT = 4;
+    public static final int COUNT = 4;
+    public static final int MAX_VALUE = 6;
 
     int[] _Values = new int[COUNT];
 
