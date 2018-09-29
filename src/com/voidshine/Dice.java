@@ -1,6 +1,8 @@
 package com.voidshine;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Dice {
     public static final int COUNT = 4;
@@ -40,10 +42,22 @@ public class Dice {
     // the second die to pair with the first (index *after*
     // skipping first).  Returns this sum as well as the
     // sum of the other pair.
-    int[] GetSums(int index) {
-        int[] sums = new int[2];
-        sums[0] = _Values[0] + _Values[index + 1];
-        sums[1] = Arrays.stream(_Values).sum() - sums[0];
-        return sums;
+    ArrayList<int[]> GetSumPairs() {
+        ArrayList<int[]> pairs = new ArrayList<int[]>();
+        // Pairings of dice can be derived by holding first
+        // die fixed and choosing one of the other three to
+        // pair with it; the other pair is then implied.
+        for (int i = 0; i < COUNT - 1; i++) {
+            int[] sums = new int[2];
+            sums[0] = _Values[0] + _Values[i + 1];
+            sums[1] = Arrays.stream(_Values).sum() - sums[0];
+            pairs.add(sums);
+        }
+
+        // Homework: Eliminate duplicates!  Hint, it may be
+        // helpful to always have the sums sorted (this also
+        // helps user think about what's happening).
+
+        return pairs;
     }
 }
