@@ -39,6 +39,7 @@ public class Board {
         for (int i = 2; i < _Columns.length; i++) {
             b._Columns[i] = _Columns[i].Clone();
         }
+        b._PawnsAvailable = _PawnsAvailable;
         return b;
     }
 
@@ -49,8 +50,10 @@ public class Board {
                 int[] c = _Columns[x]._Spaces;
                 if (y < c.length) {
                     int content = c[y];
-                    if (content == -1) {
+                    if (content == Column.EMPTY) {
                         sb.append('o');
+                    } else if (content == Column.PAWN) {
+                        sb.append('P');
                     } else {
                         sb.append('A' + content);
                     }
@@ -64,11 +67,37 @@ public class Board {
     }
 
 
-    boolean AdvancePawns(int[] columnIndices) {
+    boolean AdvancePawns(int[] columnIndices, int playerIndex) {
+        boolean advanced = false;
         for (int columnIndex : columnIndices) {
             Column column = _Columns[columnIndex];
+            if (!column.IsPlayable()) {
+                continue;
+            }
             int pawnPosition = column.GetPlayerPosition(Column.PAWN);
+            if (pawnPosition == -1) {
+                if (_PawnsAvailable <= 0) {
+                    continue;
+                } else {
+                    int playerPosition = column.GetPlayerPosition(playerIndex);
+                    pawnPosition = column.GetSuccessor(playerPosition);
+                    if (pawnPosition != playerPosition) {
+                        column.SetSpace(pawnPosition, Column.PAWN);
+                        _PawnsAvailable--;
+                        advanced = true;
+                    }
+                }
+            } else {
+                int old = pawnPosition;
+                column.SetSpace(pawnPosition, Column.EMPTY);
+                pawnPosition = column.GetSuccessor(pawnPosition);
+                column.SetSpace(pawnPosition, Column.PAWN);
+
+                if (pawnPosition != old) {
+                    advanced = true;
+                }
+            }
         }
-        return true;
+        return advanced;
     }
 }

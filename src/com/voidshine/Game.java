@@ -53,7 +53,7 @@ public class Game {
 
         for (int[] sums : from._Dice.GetSumPairs()) {
             Move move = new Move(from, "Advance on " + sums[0] + " and " + sums[1], s -> {
-                boolean advanced = s._Board.AdvancePawns(sums);
+                boolean advanced = s._Board.AdvancePawns(sums, s._PlayerIndex);
             });
             moves.add(move);
         }

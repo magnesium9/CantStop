@@ -43,4 +43,21 @@ public class Column {
     int GetLastSpace() {
         return _Spaces[_Spaces.length - 1];
     }
+
+    boolean IsPlayable() {
+        return GetLastSpace() == EMPTY;
+    }
+
+    // If this returns position, there was no successor;
+    // otherwise it returns the next position for advancement.
+    // In the classic Can't Stop, this just adds 1, but in
+    // the "Speed" variant, it depends on the space contents.
+    int GetSuccessor(int position) {
+        // BUG!  Homework: fix the bug.
+        return position + 1;
+    }
+
+    void SetSpace(int position, int player) {
+        _Spaces[position] = player;
+    }
 }
