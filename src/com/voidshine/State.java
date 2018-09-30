@@ -1,5 +1,10 @@
 package com.voidshine;
 
+enum Mode {
+    PairingDice,
+    RollOrStop,
+}
+
 // Holds full state of the game and evolves from one step to next
 // in combination with Game class.
 public class State {
@@ -10,12 +15,14 @@ public class State {
     String _Error;
     Dice _Dice;
     Board _Board;
+    Mode _Mode;
 
     State(Game game) {
         _Game = game;
         _Winner = -1;
         _Dice = new Dice();
         _Board = new Board();
+        _Mode = Mode.PairingDice;
     }
 
     State Clone() {
@@ -26,6 +33,7 @@ public class State {
         s._Winner = _Winner;
         s._Dice = _Dice.Clone();
         s._Board = _Board.Clone();
+        s._Mode = _Mode;
         return s;
     }
 

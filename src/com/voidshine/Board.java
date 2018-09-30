@@ -100,4 +100,21 @@ public class Board {
         }
         return advanced;
     }
+
+    // Removes all pawns from the board, with no player advancement
+    void ClearPawns() {
+        for (Column c : _Columns) {
+            for (int i = 0; i < c._Spaces.length; i++) {
+                if (c._Spaces[i] == Column.PAWN) {
+                    c._Spaces[i] = Column.EMPTY;
+                }
+            }
+        }
+        _PawnsAvailable = NUM_PAWNS;
+    }
+
+    // Similar in effect to ClearPawns, but advances given player to pawn positions.
+    void AdvancePlayerToPawns(int playerIndex) {
+        // Homework: write this method and find an appropriate use for it in Game class
+    }
 }

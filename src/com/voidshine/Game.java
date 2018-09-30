@@ -29,6 +29,14 @@ public class Game {
         return (currentPlayer + 1) % NumPlayers();
     }
 
+    // Modify given state to end current player's turn
+    // and begin the next player's turn.
+    void EndTurn(State s) {
+        s._PlayerIndex = NextPlayer(s._PlayerIndex);
+        s._Dice.roll();
+        s._Mode = Mode.PairingDice;
+    }
+
     ArrayList<Move> GetMoves(State from) {
         ArrayList<Move> moves = new ArrayList<Move>();
 
@@ -44,18 +52,38 @@ public class Game {
         });
         moves.add(resign);
 
-        // Stop move
-        Move stop = new Move(from, "Stop", s -> {
-            s._PlayerIndex = NextPlayer(s._PlayerIndex);
-            s._Dice.roll();
-        });
-        moves.add(stop);
+        switch (from._Mode) {
+            case RollOrStop: {
+                // Stop move
+                Move stop = new Move(from, "Stop", s -> {
+                    EndTurn(s);
+                });
+                moves.add(stop);
 
-        for (int[] sums : from._Dice.GetSumPairs()) {
-            Move move = new Move(from, "Advance on " + sums[0] + " and " + sums[1], s -> {
-                boolean advanced = s._Board.AdvancePawns(sums, s._PlayerIndex);
-            });
-            moves.add(move);
+                // Roll move
+                Move roll = new Move(from, "Roll", s -> {
+                    // Homework
+                    s._Error = "TODO: Roll state";
+                });
+                moves.add(roll);
+            }
+            case PairingDice: {
+                if (from._Mode == Mode.PairingDice) {
+                    for (int[] sums : from._Dice.GetSumPairs()) {
+                        Move move = new Move(from, "Advance on " + sums[0] + " and " + sums[1], s -> {
+                            boolean advanced = s._Board.AdvancePawns(sums, s._PlayerIndex);
+                            if (advanced) {
+                                s._Mode = Mode.RollOrStop;
+                            } else {
+                                // Bust!
+                                s._Board.ClearPawns();
+                                EndTurn(s);
+                            }
+                        });
+                        moves.add(move);
+                    }
+                }
+            }
         }
 
         // Assign easy-to-type action strings for all moves
