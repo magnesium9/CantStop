@@ -2,6 +2,7 @@ package com.voidshine;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public class Dice {
@@ -44,6 +45,7 @@ public class Dice {
     // sum of the other pair.
     ArrayList<int[]> GetSumPairs() {
         ArrayList<int[]> pairs = new ArrayList<int[]>();
+        List<int[]> noDuplicatePairs = new ArrayList<>(new HashSet<>(pairs));
         // Pairings of dice can be derived by holding first
         // die fixed and choosing one of the other three to
         // pair with it; the other pair is then implied.
@@ -54,10 +56,13 @@ public class Dice {
             pairs.add(sums);
         }
 
+        ArrayList<int[]> cleanpairs;
+        cleanpairs = new ArrayList<String>(noDuplicatePairs);
+
         // Homework: Eliminate duplicates!  Hint, it may be
         // helpful to always have the sums sorted (this also
         // helps user think about what's happening).
 
-        return pairs;
+        return cleanpairs;
     }
 }
