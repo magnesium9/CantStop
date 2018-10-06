@@ -1,9 +1,6 @@
 package com.voidshine;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class Dice {
     public static final int COUNT = 4;
@@ -28,7 +25,7 @@ public class Dice {
         // Roll the dice by setting each of the dice to be
         // a random number between 1 and 6.
         for (int i = 0; i < _Values.length; i++) {
-            _Values[i] = (int)(Math.random() * 6) + 1;
+            _Values[i] = (int) (Math.random() * 6) + 1;
         }
     }
 
@@ -45,7 +42,6 @@ public class Dice {
     // sum of the other pair.
     ArrayList<int[]> GetSumPairs() {
         ArrayList<int[]> pairs = new ArrayList<int[]>();
-        List<int[]> noDuplicatePairs = new ArrayList<>(new HashSet<>(pairs));
         // Pairings of dice can be derived by holding first
         // die fixed and choosing one of the other three to
         // pair with it; the other pair is then implied.
@@ -53,16 +49,33 @@ public class Dice {
             int[] sums = new int[2];
             sums[0] = _Values[0] + _Values[i + 1];
             sums[1] = Arrays.stream(_Values).sum() - sums[0];
+            if(sums[0] > sums[1]){
+                int temp = sums[0];
+                sums[0] = sums[1];
+                sums[1] = temp;
+            }
+
             pairs.add(sums);
         }
 
-        ArrayList<int[]> cleanpairs;
-        cleanpairs = new ArrayList<String>(noDuplicatePairs);
+
+        for (int i = 0; i < pairs.size(); i++) {
+            for (int j = i + 1; j < pairs.size(); j++) {
+
+                if (Arrays.equals(pairs.get(i), pairs.get(j))) {
+                    pairs.remove(j);
+                    j--;
+                }
+            }
+        }
+
 
         // Homework: Eliminate duplicates!  Hint, it may be
         // helpful to always have the sums sorted (this also
         // helps user think about what's happening).
 
-        return cleanpairs;
+            return pairs;
+        }
     }
-}
+
+
