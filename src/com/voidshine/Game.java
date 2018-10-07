@@ -68,6 +68,13 @@ public class Game {
                 moves.add(roll);
             }
             case PairingDice: {
+                // Homework: Break down pair moves into single moves when only one pawn can move.
+                // If two pawns can move (one for each dice pair), great; but often only one of
+                // the dice pairs will reference a column that has a pawn, and the other cannot
+                // be used either because the column is claimed or there are no more pawns to
+                // place.  In these cases, the player should be able to choose the single
+                // pawn move to make.  Sometimes there may be only one such option, and it should
+                // still be presented.  This one is advanced homework; give it a try.
                 if (from._Mode == Mode.PairingDice) {
                     // First gather pawn moves to see if any actually advance
                     ArrayList<Move> pawnMoves = new ArrayList<>();
@@ -76,10 +83,10 @@ public class Game {
                             if (s._Board.AdvancePawns(sums, s._PlayerIndex)) {
                                 s._Mode = Mode.RollOrStop;
                             } else {
-                                s._Mode = Mode.Bust;
+                                s._Error = "Pawns could not advance.";
                             }
                         });
-                        if (move._Next._Mode != Mode.Bust) {
+                        if (move._Next._Error == null) {
                             pawnMoves.add(move);
                         }
                     }
