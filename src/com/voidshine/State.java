@@ -3,6 +3,7 @@ package com.voidshine;
 enum Mode {
     PairingDice,
     RollOrStop,
+    Bust,
 }
 
 // Holds full state of the game and evolves from one step to next

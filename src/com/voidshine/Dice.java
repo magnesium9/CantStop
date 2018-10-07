@@ -49,7 +49,7 @@ public class Dice {
             int[] sums = new int[2];
             sums[0] = _Values[0] + _Values[i + 1];
             sums[1] = Arrays.stream(_Values).sum() - sums[0];
-            if(sums[0] > sums[1]){
+            if(sums[0] > sums[1]) {
                 int temp = sums[0];
                 sums[0] = sums[1];
                 sums[1] = temp;
@@ -58,10 +58,8 @@ public class Dice {
             pairs.add(sums);
         }
 
-
         for (int i = 0; i < pairs.size(); i++) {
             for (int j = i + 1; j < pairs.size(); j++) {
-
                 if (Arrays.equals(pairs.get(i), pairs.get(j))) {
                     pairs.remove(j);
                     j--;
@@ -69,13 +67,6 @@ public class Dice {
             }
         }
 
-
-        // Homework: Eliminate duplicates!  Hint, it may be
-        // helpful to always have the sums sorted (this also
-        // helps user think about what's happening).
-
-            return pairs;
-        }
+        return pairs;
     }
-
-
+}

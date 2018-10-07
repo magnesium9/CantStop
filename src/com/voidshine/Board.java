@@ -6,8 +6,9 @@ public class Board {
 
     public static final int NUM_PAWNS = 3;
 
-    // First index will be from sums of dice pairs,
-    // so the first two elements will remain null.
+    // Index will be from sums of dice pairs,
+    // so the first two elements will remain null
+    // (minimum sum of a dice pair is 1 + 1 = 2).
     Column[] _Columns;
 
     int _PawnsAvailable;
@@ -104,6 +105,10 @@ public class Board {
     // Removes all pawns from the board, with no player advancement
     void ClearPawns() {
         for (Column c : _Columns) {
+            // Some columns may be null (e.g. at indices 0, 1)
+            if (c == null) {
+                continue;
+            }
             for (int i = 0; i < c._Spaces.length; i++) {
                 if (c._Spaces[i] == Column.PAWN) {
                     c._Spaces[i] = Column.EMPTY;

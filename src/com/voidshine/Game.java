@@ -62,26 +62,40 @@ public class Game {
 
                 // Roll move
                 Move roll = new Move(from, "Roll", s -> {
-                    // Homework
-                    s._Error = "TODO: Roll state";
+                    s._Mode = Mode.PairingDice;
+                    s._Dice.roll();
                 });
                 moves.add(roll);
             }
             case PairingDice: {
                 if (from._Mode == Mode.PairingDice) {
+                    // First gather pawn moves to see if any actually advance
+                    ArrayList<Move> pawnMoves = new ArrayList<>();
                     for (int[] sums : from._Dice.GetSumPairs()) {
                         Move move = new Move(from, "Advance on " + sums[0] + " and " + sums[1], s -> {
-                            boolean advanced = s._Board.AdvancePawns(sums, s._PlayerIndex);
-                            if (advanced) {
+                            if (s._Board.AdvancePawns(sums, s._PlayerIndex)) {
                                 s._Mode = Mode.RollOrStop;
                             } else {
-                                // Bust!
-                                s._Board.ClearPawns();
-                                EndTurn(s);
+                                s._Mode = Mode.Bust;
                             }
                         });
-                        moves.add(move);
+                        if (move._Next._Mode != Mode.Bust) {
+                            pawnMoves.add(move);
+                        }
                     }
+
+                    // Then we either provide good pawn moves or a bust/pass-turn move
+                    // to acknowledge utter (well, partial) defeat.
+                    if (pawnMoves.size() > 0) {
+                        moves.addAll(pawnMoves);
+                    } else {
+                       // No pawn moves -> All Bust!
+                        Move bust = new Move(from, "Bust!  Pass turn.", s -> {
+                            s._Board.ClearPawns();
+                            EndTurn(s);
+                        });
+                        moves.add(bust);
+                   }
                 }
             }
         }
