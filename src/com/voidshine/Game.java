@@ -56,6 +56,7 @@ public class Game {
             case RollOrStop: {
                 // Stop move
                 Move stop = new Move(from, "Stop", s -> {
+                    s._Board.AdvancePlayerToPawns(s._PlayerIndex);
                     EndTurn(s);
                 });
                 moves.add(stop);

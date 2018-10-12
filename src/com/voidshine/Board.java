@@ -6,6 +6,10 @@ public class Board {
 
     public static final int NUM_PAWNS = 3;
 
+    static char GetPlayerTokenChar(int playerIndex) {
+        return (char)('A' + playerIndex);
+    }
+
     // Index will be from sums of dice pairs,
     // so the first two elements will remain null
     // (minimum sum of a dice pair is 1 + 1 = 2).
@@ -56,7 +60,7 @@ public class Board {
                     } else if (content == Column.PAWN) {
                         sb.append('P');
                     } else {
-                        sb.append('A' + content);
+                        sb.append(GetPlayerTokenChar(content));
                     }
                 } else {
                     sb.append(' ');
@@ -66,7 +70,6 @@ public class Board {
         }
         return sb.toString();
     }
-
 
     boolean AdvancePawns(int[] columnIndices, int playerIndex) {
         boolean advanced = false;
@@ -120,9 +123,19 @@ public class Board {
 
     // Similar in effect to ClearPawns, but advances given player to pawn positions.
     void AdvancePlayerToPawns(int playerIndex) {
-        // Homework: write this method and find an appropriate use for it in Game class
-
-
-
+        for (Column c : _Columns) {
+            if (c == null) {
+                continue;
+            }
+            int to = c.GetPlayerPosition(Column.PAWN);
+            if (to >= 0) {
+                int from = c.GetPlayerPosition(playerIndex);
+                if (from >= 0) {
+                    c.SetSpace(from, Column.EMPTY);
+                }
+                c.SetSpace(to, playerIndex);
+                _PawnsAvailable++;
+            }
+        }
     }
 }

@@ -57,7 +57,7 @@ public class State {
                 sb.append(WinnerName() + " wins!\n");
             }
         } else {
-            sb.append(PlayerName() + " to play.\n");
+            sb.append("(" + Board.GetPlayerTokenChar(_PlayerIndex) + ") " + PlayerName() + " to play.\n");
             sb.append("Dice: " + _Dice.ToString() + "\n");
         }
         return sb.toString();
