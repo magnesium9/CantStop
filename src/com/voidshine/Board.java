@@ -1,5 +1,7 @@
 package com.voidshine;
 
+import java.util.ArrayList;
+
 public class Board {
 
     public static final int MAX_HEIGHT = 13;
@@ -71,8 +73,8 @@ public class Board {
         return sb.toString();
     }
 
-    boolean AdvancePawns(int[] columnIndices, int playerIndex) {
-        boolean advanced = false;
+    ArrayList<Integer> AdvancePawns(int[] columnIndices, int playerIndex) {
+        ArrayList<Integer> advanced = new ArrayList<Integer>();
         for (int columnIndex : columnIndices) {
             Column column = _Columns[columnIndex];
             if (!column.IsPlayable()) {
@@ -88,7 +90,7 @@ public class Board {
                     if (pawnPosition != playerPosition) {
                         column.SetSpace(pawnPosition, Column.PAWN);
                         _PawnsAvailable--;
-                        advanced = true;
+                        advanced.add(columnIndex);
                     }
                 }
             } else {
@@ -98,7 +100,7 @@ public class Board {
                 column.SetSpace(pawnPosition, Column.PAWN);
 
                 if (pawnPosition != old) {
-                    advanced = true;
+                    advanced.add(columnIndex);
                 }
             }
         }

@@ -1,6 +1,9 @@
 package com.voidshine;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 // A game encapsulates the rules and things that remain constant
 // from beginning to end of a play of the game.
@@ -46,25 +49,28 @@ public class Game {
         }
 
         // If game is active we can always accept a resign move
-        Move resign = new Move(from, "Resign", s -> {
+        Move resign = new Move(from, s -> {
             s._IsFinal = true;
             s._Winner = NextPlayer(s._PlayerIndex);
+            return "Resign";
         });
         moves.add(resign);
 
         switch (from._Mode) {
             case RollOrStop: {
                 // Stop move
-                Move stop = new Move(from, "Stop", s -> {
+                Move stop = new Move(from, s -> {
                     s._Board.AdvancePlayerToPawns(s._PlayerIndex);
                     EndTurn(s);
+                    return "Stop";
                 });
                 moves.add(stop);
 
                 // Roll move
-                Move roll = new Move(from, "Roll", s -> {
+                Move roll = new Move(from, s -> {
                     s._Mode = Mode.PairingDice;
                     s._Dice.roll();
+                    return "Roll";
                 });
                 moves.add(roll);
             }
@@ -80,11 +86,15 @@ public class Game {
                     // First gather pawn moves to see if any actually advance
                     ArrayList<Move> pawnMoves = new ArrayList<>();
                     for (int[] sums : from._Dice.GetSumPairs()) {
-                        Move move = new Move(from, "Advance on " + sums[0] + " and " + sums[1], s -> {
-                            if (s._Board.AdvancePawns(sums, s._PlayerIndex)) {
+                        Move move = new Move(from, s -> {
+                            List<Integer> advanced = s._Board.AdvancePawns(sums, s._PlayerIndex);
+                            if (advanced.size() > 0) {
                                 s._Mode = Mode.RollOrStop;
+                                List<String> stringValues = advanced.stream().map(i -> Integer.toString(i)).collect(Collectors.toList());
+                                return "Advance on " + String.join(" and ", stringValues);
                             } else {
                                 s._Error = "Pawns could not advance.";
+                                return null;
                             }
                         });
                         if (move._Next._Error == null) {
@@ -98,9 +108,10 @@ public class Game {
                         moves.addAll(pawnMoves);
                     } else {
                        // No pawn moves -> All Bust!
-                        Move bust = new Move(from, "Bust!  Pass turn.", s -> {
+                        Move bust = new Move(from, s -> {
                             s._Board.ClearPawns();
                             EndTurn(s);
+                            return "Bust!  Pass turn.";
                         });
                         moves.add(bust);
                    }
