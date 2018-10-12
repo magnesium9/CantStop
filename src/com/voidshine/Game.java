@@ -1,5 +1,7 @@
 package com.voidshine;
 
+import javafx.util.Pair;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -75,30 +77,49 @@ public class Game {
                 moves.add(roll);
             }
             case PairingDice: {
-                // Homework: Break down pair moves into single moves when only one pawn can move.
-                // If two pawns can move (one for each dice pair), great; but often only one of
-                // the dice pairs will reference a column that has a pawn, and the other cannot
-                // be used either because the column is claimed or there are no more pawns to
-                // place.  In these cases, the player should be able to choose the single
-                // pawn move to make.  Sometimes there may be only one such option, and it should
-                // still be presented.  This one is advanced homework; give it a try.
                 if (from._Mode == Mode.PairingDice) {
                     // First gather pawn moves to see if any actually advance
                     ArrayList<Move> pawnMoves = new ArrayList<>();
                     for (int[] sums : from._Dice.GetSumPairs()) {
-                        Move move = new Move(from, s -> {
-                            List<Integer> advanced = s._Board.AdvancePawns(sums, s._PlayerIndex);
-                            if (advanced.size() > 0) {
-                                s._Mode = Mode.RollOrStop;
-                                List<String> stringValues = advanced.stream().map(i -> Integer.toString(i)).collect(Collectors.toList());
-                                return "Advance on " + String.join(" and ", stringValues);
-                            } else {
-                                s._Error = "Pawns could not advance.";
-                                return null;
+                        boolean[] trySwapped = { false };
+                        Function<Pair<int[], State>, String> generate = (pair) -> {
+                            int[] diceSums = pair.getKey();
+                            State s = pair.getValue();
+                            List<Integer> advanced = s._Board.AdvancePawns(diceSums, s._PlayerIndex);
+                            switch (advanced.size()) {
+                                case 0: {
+                                    s._Error = "Pawns could not advance.";
+                                    return null;
+                                }
+                                case 1: {
+                                    trySwapped[0] = true;
+                                    s._Mode = Mode.RollOrStop;
+                                    return "Advance on " + advanced.get(0).toString();
+                                }
+                                case 2: {
+                                    s._Mode = Mode.RollOrStop;
+                                    List<String> stringValues = advanced.stream().map(i -> Integer.toString(i)).collect(Collectors.toList());
+                                    return "Advance on " + String.join(" and ", stringValues);
+                                }
+                                default: {
+                                    // Not reached.
+                                    s._Error = "Impossible!";
+                                    return null;
+                                }
                             }
-                        });
+                        };
+                        Move move = new Move(from, s -> generate.apply(new Pair<int[], State>(sums, s)));
                         if (move._Next._Error == null) {
                             pawnMoves.add(move);
+                        }
+                        if (trySwapped[0]) {
+                            int temp = sums[0];
+                            sums[0] = sums[1];
+                            sums[1] = temp;
+                            Move alternate = new Move(from, s -> generate.apply(new Pair<>(sums, s)));
+                            if (!alternate._Description.equals(move._Description)) {
+                                pawnMoves.add(alternate);
+                            }
                         }
                     }
 
