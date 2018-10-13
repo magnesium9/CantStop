@@ -53,8 +53,12 @@ public class Column {
     // In the classic Can't Stop, this just adds 1, but in
     // the "Speed" variant, it depends on the space contents.
     int GetSuccessor(int position) {
-        // BUG!  Homework: fix the bug.
-        return position + 1;
+        for (int i = position + 1; i < _Spaces.length; i++) {
+            if (_Spaces[i] == EMPTY) {
+                return i;
+            }
+        }
+        return position;
     }
 
     void SetSpace(int position, int player) {
