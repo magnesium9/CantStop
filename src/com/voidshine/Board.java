@@ -58,18 +58,22 @@ public class Board {
                 if (y < c.length) {
                     int content = c[y];
                     if (content == Column.EMPTY) {
-                        sb.append('o');
+                        sb.append("[ ]");
                     } else if (content == Column.PAWN) {
-                        sb.append('P');
+                        sb.append("[P]");
                     } else {
-                        sb.append(GetPlayerTokenChar(content));
+                        sb.append("[" + GetPlayerTokenChar(content) + "]");
                     }
                 } else {
-                    sb.append(' ');
+                    sb.append("   ");
                 }
             }
             sb.append("\n");
         }
+        for (int x = 2; x < _Columns.length; x++) {
+            sb.append(String.format((x >= 10 ? " %2d" : "%2d "), x));
+        }
+        sb.append("\nPawns Available: " + _PawnsAvailable + "\n");
         return sb.toString();
     }
 
