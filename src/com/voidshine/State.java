@@ -8,6 +8,9 @@ enum Mode {
 // Holds full state of the game and evolves from one step to next
 // in combination with Game class.
 public class State {
+    // Number of columns that must be claimed by a player to win
+    static final int CLAIMS_REQUIRED = 3;
+
     private Game _Game;
     int _PlayerIndex;
     boolean _IsFinal;
@@ -57,9 +60,29 @@ public class State {
                 sb.append(WinnerName() + " wins!\n");
             }
         } else {
-            sb.append("(" + Board.GetPlayerTokenChar(_PlayerIndex) + ") " + PlayerName() + " to play.\n");
-            sb.append("Dice: " + _Dice.ToString() + "\n");
+            switch (_Mode) {
+                case PairingDice: {
+                    sb.append("(" + Board.GetPlayerTokenChar(_PlayerIndex) + ") " + PlayerName() + " just rolled.\n");
+                    sb.append("Dice: " + _Dice.ToString() + "\n");
+                    break;
+                }
+                case RollOrStop: {
+                    sb.append("(" + Board.GetPlayerTokenChar(_PlayerIndex) + ") " + PlayerName() + " must choose whether to push luck.\n");
+                    break;
+                }
+            }
         }
         return sb.toString();
+    }
+
+    // Check win conditions and finalize winner if met
+    boolean TryWin() {
+        int claimed = _Board.CountClaimsByPlayer(_PlayerIndex);
+        if (claimed >= CLAIMS_REQUIRED) {
+            _IsFinal = true;
+            _Winner = _PlayerIndex;
+            return true;
+        }
+        return false;
     }
 }

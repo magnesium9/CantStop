@@ -63,8 +63,12 @@ public class Game {
                 // Stop move
                 Move stop = new Move(from, s -> {
                     s._Board.AdvancePlayerToPawns(s._PlayerIndex);
-                    EndTurn(s);
-                    return "Stop";
+                    if (s.TryWin()) {
+                        return "Stop & Win!";
+                    } else {
+                        EndTurn(s);
+                        return "Stop";
+                    }
                 });
                 moves.add(stop);
 

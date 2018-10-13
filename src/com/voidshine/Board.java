@@ -73,7 +73,12 @@ public class Board {
         for (int x = 2; x < _Columns.length; x++) {
             sb.append(String.format((x >= 10 ? " %2d" : "%2d "), x));
         }
-        sb.append("\nPawns Available: " + _PawnsAvailable + "\n");
+        sb.append("\n");
+        for (int x = 2; x < _Columns.length; x++) {
+            sb.append((_Columns[x].GetPlayerPosition(Column.PAWN) >= 0 ? " ↑ " : "   "));
+        }
+        sb.append("\n");
+        sb.append("Pawns Available: " + _PawnsAvailable + "\n");
         return sb.toString();
     }
 
@@ -143,5 +148,18 @@ public class Board {
                 _PawnsAvailable++;
             }
         }
+    }
+
+    int CountClaimsByPlayer(int playerIndex) {
+        int count = 0;
+        for (Column c : _Columns) {
+            if (c == null) {
+                continue;
+            }
+            if (c.GetLastSpace() == playerIndex) {
+                count++;
+            }
+        }
+        return count;
     }
 }
