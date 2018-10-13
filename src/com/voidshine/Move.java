@@ -14,6 +14,7 @@ public class Move {
 
     Move(State from, Function<State, String> nextStateGenerator) {
         _Next = from.Clone();
+        _Next._From = from;
         _Description = nextStateGenerator.apply(_Next);
     }
 }

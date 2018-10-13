@@ -50,6 +50,15 @@ public class Game {
             return moves;
         }
 
+        // Undo / go back in time
+        if (from._From != null) {
+            Move back = new Move(from, s -> {
+                from._From.CopyTo(s);
+                return "Go Back";
+            });
+            moves.add(back);
+        }
+
         // If game is active we can always accept a resign move
         Move resign = new Move(from, s -> {
             s._IsFinal = true;

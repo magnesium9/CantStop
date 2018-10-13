@@ -19,6 +19,7 @@ public class State {
     Dice _Dice;
     Board _Board;
     Mode _Mode;
+    State _From;
 
     State(Game game) {
         _Game = game;
@@ -26,10 +27,16 @@ public class State {
         _Dice = new Dice();
         _Board = new Board();
         _Mode = Mode.PairingDice;
+        _From = null;
     }
 
     State Clone() {
         State s = new State(_Game);
+        CopyTo(s);
+        return s;
+    }
+
+    void CopyTo(State s) {
         s._PlayerIndex = _PlayerIndex;
         s._IsFinal = _IsFinal;
         s._Error = _Error;
@@ -37,7 +44,7 @@ public class State {
         s._Dice = _Dice.Clone();
         s._Board = _Board.Clone();
         s._Mode = _Mode;
-        return s;
+        s._From = _From;
     }
 
     String PlayerName() {
